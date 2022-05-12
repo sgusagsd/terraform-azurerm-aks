@@ -10,7 +10,7 @@ module "ssh-key" {
 resource "azurerm_kubernetes_cluster" "main" {
   name                    = var.cluster_name == null ? "${var.prefix}-aks" : var.cluster_name
   kubernetes_version      = var.kubernetes_version
-  location                = data.azurerm_resource_group.main.location
+  location                = var.location
   resource_group_name     = data.azurerm_resource_group.main.name
   node_resource_group     = var.node_resource_group
   dns_prefix              = var.prefix
@@ -154,7 +154,7 @@ resource "azurerm_kubernetes_cluster" "main" {
 resource "azurerm_log_analytics_workspace" "main" {
   count               = var.enable_log_analytics_workspace ? 1 : 0
   name                = var.cluster_log_analytics_workspace_name == null ? "${var.prefix}-workspace" : var.cluster_log_analytics_workspace_name
-  location            = data.azurerm_resource_group.main.location
+  location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = var.log_analytics_workspace_sku
   retention_in_days   = var.log_retention_in_days
@@ -165,7 +165,7 @@ resource "azurerm_log_analytics_workspace" "main" {
 resource "azurerm_log_analytics_solution" "main" {
   count                 = var.enable_log_analytics_workspace ? 1 : 0
   solution_name         = "ContainerInsights"
-  location              = data.azurerm_resource_group.main.location
+  location              = var.location
   resource_group_name   = var.resource_group_name
   workspace_resource_id = azurerm_log_analytics_workspace.main[0].id
   workspace_name        = azurerm_log_analytics_workspace.main[0].name
